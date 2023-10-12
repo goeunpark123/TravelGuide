@@ -10,7 +10,6 @@ import { VALIDATOR_MINLENGTH, VALIDATOR_REQUIRE } from "../../shared/validator";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import Input from "../../shared/components/FormElements/Input";
-import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 import Button from "../../shared/components/FormElements/Button";
 
 const NewPlace = () => {
@@ -89,8 +88,6 @@ const NewPlace = () => {
           errorText="Invalid input."
           onInput={inputHandler}
         />
-
-        <ImageUpload id="image" />
 
         <Button type="submit" disabled={!formState.isValid}>
           ADD PLACE
