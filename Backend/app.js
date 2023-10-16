@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const fs = require("fs");
+const path = require("path");
 
 const placeRoutes = require("./routes/place-routes");
 const HttpError = require("./models/http-error");
@@ -8,6 +10,7 @@ const HttpError = require("./models/http-error");
 const app = express();
 
 app.use(bodyParser.json());
+app.use("/uploads", express.static("uploads"));
 
 //CORS
 app.use((req, res, next) => {
@@ -30,6 +33,12 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  if (req.file) {
+    fs.unlink(req.file.path, (err) => {
+      console.log(err);
+    });
+  }
+
   if (res.headerSent) {
     return next(err);
   }

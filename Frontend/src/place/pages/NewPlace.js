@@ -10,6 +10,7 @@ import { VALIDATOR_MINLENGTH, VALIDATOR_REQUIRE } from "../../shared/validator";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import Input from "../../shared/components/FormElements/Input";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 import Button from "../../shared/components/FormElements/Button";
 
 const NewPlace = () => {
@@ -30,6 +31,10 @@ const NewPlace = () => {
         value: "",
         isValid: false,
       },
+      image: {
+        value: null,
+        isValid: false,
+      },
     },
     false
   );
@@ -38,18 +43,33 @@ const NewPlace = () => {
     event.preventDefault();
 
     try {
-      await sendRequest(
-        "http://localhost:5000/api/places",
-        "POST",
-        {
-          "Content-Type": "application/json",
-        },
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
-          address: formState.inputs.address.value,
-        })
-      );
+      const formData = new FormData();
+
+      formData.append("title", formState.inputs.title.value);
+      formData.append("description", formState.inputs.description.value);
+      formData.append("address", formState.inputs.address.value);
+      formData.append("image", formState.inputs.image.value);
+
+      for (let value of formData.values()) {
+        console.log(value);
+      }
+
+      await sendRequest("http://localhost:5000/api/places", "POST", formData, {
+        //"Content-Type": "multipart/form-data",
+        Accept: "application/json",
+      });
+      // await sendRequest(
+      //   "http://localhost:5000/api/places",
+      //   "POST",
+      //   {
+      //     "Content-Type": "application/json",
+      //   },
+      //   JSON.stringify({
+      //     title: formState.inputs.title.value,
+      //     description: formState.inputs.description.value,
+      //     address: formState.inputs.address.value,
+      //   })
+      // );
 
       history.push("/places");
     } catch (err) {}
@@ -87,6 +107,12 @@ const NewPlace = () => {
           validators={[VALIDATOR_REQUIRE()]}
           errorText="Invalid input."
           onInput={inputHandler}
+        />
+
+        <ImageUpload
+          id="image"
+          onInput={inputHandler}
+          errorText="Please provide an image."
         />
 
         <Button type="submit" disabled={!formState.isValid}>
